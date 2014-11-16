@@ -35,8 +35,8 @@ CREATE VIEW tree_history AS SELECT history.history_id, history.tree_id, tree.loc
 CREATE RULE tree_history_insert AS ON INSERT TO tree_history DO INSTEAD INSERT INTO history (tree_id, value) VALUES (get_tree(NEW.location), NEW.value);
 # TODO: RULES for UPDATE and DELETE
 
-INSERT INTO history (value) (1);
 
+INSERT INTO history (value) VALUES (1);
 INSERT INTO tree (location) VALUES (ST_GeomFromText('POINT(53 11)'));
 INSERT INTO history (tree_id, value) VALUES (1,1);
 
