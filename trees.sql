@@ -17,6 +17,7 @@ CREATE TABLE history (
 ); 
 
 
+# Look up or generate foreign key
 
 CREATE FUNCTION get_tree(new_location geometry) RETURNS integer AS $$
 DECLARE
@@ -31,14 +32,25 @@ END
 $$
 LANGUAGE plpgsql;
 
+
+# Create view combining both tables to execute INSERTs on
+
 CREATE VIEW tree_history AS SELECT history.history_id, history.tree_id, tree.location, history.value FROM tree JOIN history ON tree.tree_id = history.tree_id;
+
+# Create INSERT rule for redirect
+
 CREATE RULE tree_history_insert AS ON INSERT TO tree_history DO INSTEAD INSERT INTO history (tree_id, value) VALUES (get_tree(NEW.location), NEW.value);
+
 # TODO: RULES for UPDATE and DELETE
 
+
+# Testing on each table separately
 
 INSERT INTO history (value) VALUES (1);
 INSERT INTO tree (location) VALUES (ST_GeomFromText('POINT(53 11)'));
 INSERT INTO history (tree_id, value) VALUES (1,1);
+
+# Testing cross reference between tables
 
 INSERT INTO tree_history (location, value) VALUES (ST_GeomFromText('POINT(53 11)'), 2);
 INSERT INTO tree_history (location, value) VALUES (ST_GeomFromText('POINT(53 11)'), 3);
