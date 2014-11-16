@@ -29,11 +29,13 @@ BEGIN
 	SELECT tree_id
 	FROM tree
 	WHERE tree.location = new_location
-	LIMIT 1 INTO result_tree_id;
+	LIMIT 1
+	INTO result_tree_id;
 	IF NOT FOUND THEN
 		INSERT INTO tree (location)
 		VALUES (new_location)
-		RETURNING tree_id INTO result_tree_id;
+		RETURNING tree_id
+		INTO result_tree_id;
 	END IF;
 	RETURN result_tree_id;
 END
